@@ -2,7 +2,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdTrash } from "react-icons/io";
-import { removeFromCart, addToCart } from "../redux/features/cartSlice";
+import {
+  removeFromCart,
+  addToCart,
+  decreaseQty,
+} from "../redux/features/cartSlice";
 import toast from "react-hot-toast";
 
 const Cart = () => {
@@ -13,14 +17,14 @@ const Cart = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
+  // ➕ Increase by 1
   const increaseQty = (item) => {
-    dispatch(addToCart({ ...item, qty: item.qty + 1 }));
+    dispatch(addToCart(item));
   };
 
-  const decreaseQty = (item) => {
-    if (item.qty > 1) {
-      dispatch(addToCart({ ...item, qty: item.qty - 1 }));
-    }
+  // ➖ Decrease by 1
+  const decreaseQtyHandler = (item) => {
+    dispatch(decreaseQty({ id: item.id }));
   };
 
   const removeItem = (id, name) => {
@@ -36,7 +40,7 @@ const Cart = () => {
   return (
     <div className="min-h-screen bg-white px-2 sm:px-10 py-10">
       <h1 className="text-3xl font-semibold mb-8 text-gray-800 text-center mt-20">
-        Your Cart{" "}
+        Your Cart
       </h1>
 
       <div className="grid lg:grid-cols-3 gap-10">
@@ -56,24 +60,33 @@ const Cart = () => {
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded-md"
                 />
+
                 <div className="ml-4 flex-1">
                   <h2 className="text-lg font-medium text-gray-900">
                     {item.name}
                   </h2>
+
                   <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                     {item.description}
                   </p>
+
                   <p className="font-semibold text-gray-700 text-sm mt-1">
                     ₹{item.price.toLocaleString("en-IN")}/-
                   </p>
+
                   <div className="flex items-center gap-4 mt-3">
                     <button
-                      className="px-2 border rounded-md text-lg"
-                      onClick={() => decreaseQty(item)}
+                      className="px-2 border rounded-md text-lg disabled:opacity-40"
+                      disabled={item.qty === 1}
+                      onClick={() => decreaseQtyHandler(item)}
                     >
                       -
                     </button>
-                    <span className="font-semibold text-lg">{item.qty}</span>
+
+                    <span className="font-semibold text-lg">
+                      {item.qty}
+                    </span>
+
                     <button
                       className="px-2 border rounded-md text-lg"
                       onClick={() => increaseQty(item)}
@@ -82,6 +95,7 @@ const Cart = () => {
                     </button>
                   </div>
                 </div>
+
                 <button
                   className="text-red-600 hover:text-red-700 text-2xl ml-4"
                   onClick={() => removeItem(item.id, item.name)}
