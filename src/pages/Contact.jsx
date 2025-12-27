@@ -64,7 +64,7 @@ const Contact = () => {
                 Store Location
               </h2>
               <p className="text-gray-600 mt-2">
-                Green Valley Road, Mumbai, India – 400072
+                SB Road Road, Pune, India – 400072
               </p>
             </div>
 
